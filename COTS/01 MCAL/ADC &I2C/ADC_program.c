@@ -367,7 +367,7 @@ void ADC_DMAenable (void);*/
 //	NOTE : dont forget init the pins input analog
 
 
-
+/*
 
 void	ADC_Init()
 {
@@ -424,10 +424,10 @@ u16	ADC_Start_Single_Conversion(u8 channel)
 	data= ADC1->DR;
 	//SET_BIT(ADC1->SR,1);
 	return data;
-}
+}*/
 
 
-/*
+
 
 void	ADC_Init()
 {
@@ -485,7 +485,7 @@ u16	ADC_Start_Single_Conversion(u8 channel)
 	local_EndConv=ADC1->DR;
 	return local_EndConv;
 
-}*/
+}
 
 
 /*
