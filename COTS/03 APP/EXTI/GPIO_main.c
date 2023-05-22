@@ -485,7 +485,7 @@ return 0;
 
 
 
-
+/*
 
 int main ()
 {
@@ -559,7 +559,9 @@ int main ()
 		}
 	}
 	return 0 ;
-}
+}*/
+
+
 
 //last chance adc
 /*
@@ -615,7 +617,7 @@ int main ()
 
 // led on by interrupt
 	//C13 ==> Built in led (Toggle Led)
-/*int main()
+int main()
 {
 	//	System Clock Init
 	RCC_voidSysClkInt();
@@ -692,6 +694,6 @@ void	EXTI0_IRQHandler(void)
 
 
 
-}*/
+}
 
 

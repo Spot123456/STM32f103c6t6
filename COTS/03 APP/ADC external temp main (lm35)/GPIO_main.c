@@ -9,6 +9,9 @@
 #include 	"STK_interface.h"
 #include	"DMA_interface.h"
 #include	"ADC_interface.h"
+#include 	"ADC_private.h"
+#include	"UART.interface.h"
+#include	"SPI.interface.h"
 #include	"Delay.h"
 #include	"led.h"
 #include 	"lcd.h"
@@ -42,11 +45,100 @@ int main()
 	return 0 ;
 }*/
 
+//spi master
+/*
+int main ()
+{
+	RCC_voidSysClkInt();
+	//enable RCC portA
+	RCC_voidEnablePerClk(RCC_APB2, 2);
+	//enable RCC portB
+	//RCC_voidEnablePerClk(RCC_APB2, 3);
+
+	//enable SPI RCC
+	RCC_voidEnablePerClk(RCC_APB2, 12);
+
+	SPI_Master_init();
+	// init mosi output
+	DIO_voidSetPinDirection(PORTA, PIN7, GPIO_OUTPUT_10MHZ_AFPP);
+	// init miso input
+	DIO_voidSetPinDirection(PORTA, PIN6, GPIO_INPUT_FLOAT);
+	//inti clk for master output
+	DIO_voidSetPinDirection(PORTA, PIN5, GPIO_OUTPUT_10MHZ_AFPP);
+	// ss select out
+	DIO_voidSetPinDirection(PORTA, PIN9, GPIO_OUTPUT_10MHZ_PP);
+	//Led_init(PIN10,PORTB);
+
+	u8 data;
+		while(1)
+		{
+			DIO_voidSetPinValue(PORTA, PIN9, GPIO_LOW);	//SET SS PIN TO LOW
+			data=SPI_transceiver(1);
+			DIO_voidSetPinValue(PORTA, PIN9, GPIO_HIGH); //SET SS PIN TO HIGH
+		}
+}*/
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// uart
+/*
+int main ()
+{
+	RCC_voidSysClkInt();
+	//enable RCC portA
+	RCC_voidEnablePerClk(RCC_APB2, 2);
+	//enable RCC portB
+		RCC_voidEnablePerClk(RCC_APB2, 3);
+
+	//enable UART RCC
+	RCC_voidEnablePerClk(RCC_APB2, 14);
+	// A9 init the TX output AFPP
+	DIO_voidSetPinDirection(PORTA, PIN9, GPIO_OUTPUT_10MHZ_AFPP);
+	//	A10 for RX input float
+	DIO_voidSetPinDirection(PORTA, PIN10, GPIO_INPUT_FLOAT);
+	UART_init();
+	Led_init(PIN10,PORTB);
+	//u8 data;
+		while(1)
+		{
+			UART_TXdata(1);
+
+		}
+
+}
+*/
 
 
 
@@ -174,55 +266,100 @@ Led_init(PIN12, PORTA);
 
 
 ///ADC
-
+/*
 
 int main ()
 {
-	u8 temp ,reading;
-	u16 analog;
+	u8 temp ;
+	u16 analog,reading=0;
 	// system	CLK
 	RCC_voidSysClkInt();
 
 	//enable adc RCC
 	RCC_voidEnablePerClk(RCC_APB2, 9);
 
-	//enable portC RCC
-	RCC_voidEnablePerClk(RCC_APB2, 4);
+	//enable portB RCC
+	RCC_voidEnablePerClk(RCC_APB2, 3);
 
 	//enable porta RCC
 	RCC_voidEnablePerClk(RCC_APB2, 2);
 
-	//set the A0 analog input
+	RCC_voidEnableADC_Prescaler();
+
+	//set the A1 analog input
 	DIO_voidSetPinDirection(PORTA, PIN1, GPIO_INPUT_ANALOG);
 
 	//set the pin dio output push pull
-	DIO_voidSetPinDirection(PORTC, PIN13, GPIO_OUTPUT_10MHZ_PP);
+	DIO_voidSetPinDirection(PORTB, PIN6, GPIO_OUTPUT_10MHZ_PP);
 
 	DIO_voidSetPinDirection(PORTA, PIN10, GPIO_OUTPUT_10MHZ_PP);
-	RCC_voidEnableADC_Prescaler();
-	ADC_Init();
+
+	ADC_voidInit();
 	//temp=ADC_Start_Single_Conversion(0);
+	ADC_channelSetup(PIN1 ,SEQ1 ,cycles_1_5);
+	ADC_voidEnable();
 
 	while(1)
 	{
 		//temp=ADC_Start_Single_Conversion(0);
-		reading=ADC_Start_Single_Conversion(0);
-		analog= (((u32)reading*5000)/(256)); // equation for temp to work
-		temp=analog/10;
 
-		while (temp > 20)
+		//reading=ADC_Start_Single_Conversion(0);
+
+		ADC_Start();
+
+		reading = ADC1->DR & 0x0000FFFF;
+		analog= (((u32)reading*3300)/(256)); // equation for temp to work
+		temp=analog/10;
+		_delay_ms(1000);
+
+		if (reading >0)
 		{
 
 			//DIO_voidSetPinValue(PORTC, PIN13, GPIO_LOW);
-			led_blink(PIN13,PORTC);
+			led_blink(PIN6,PORTB);
 			led_blink(PIN10,PORTA);
 
 		}
 	}
 	return 0 ;
+}*/
+
+
+
+
+/*
+float Temperature;
+u32 ADC_Value;
+int main()
+{
+	RCC_voidSysClkInt();
+	RCC_voidEnablePerClk(RCC_APB2, 9); // enable ADC1 clock
+	RCC_voidEnablePerClk(RCC_APB2, 2);  // enable GPIOA clock
+	RCC_voidEnablePerClk(RCC_APB2, 3);  // enable GPIOA clock
+	//RCC_ADC_SETprescaler(divided4);
+	DIO_voidSetPinDirection(PORTB, PIN6, GPIO_OUTPUT_10MHZ_PP);
+	RCC_voidEnableADC_Prescaler();
+//temp sensor channel config
+	ADC_channelSetup(ADC_channe1,SEQ1,cycles_239_5);
+	ADC_voidInit();
+	ADC_voidEnable();
+	ADC_Start();
+	while(1)
+	{
+	ADC_Value	= ADC1->DR ;
+	if (ADC_Value>0)
+					{
+
+						//DIO_voidSetPinValue(PORTC, PIN13, GPIO_LOW);
+						led_blink(PIN6,PORTB);
+						//led_blink(PIN10,PORTA);
+
+					}
+	_delay_ms(1000);
+	}
+	return 0;
 }
-
-
+*/
 
 
 
@@ -348,7 +485,102 @@ return 0;
 
 
 
+// lm35 temp sensor 
 
+int main ()
+{
+	u8 temp ;
+	u16 analog,reading=0;
+	static volatile float x;
+	// system	CLK
+	RCC_voidSysClkInt();
+
+	//enable adc RCC
+	RCC_voidEnablePerClk(RCC_APB2, 9);
+
+	//enable portB RCC
+	RCC_voidEnablePerClk(RCC_APB2, 3);
+
+	//enable porta RCC
+	RCC_voidEnablePerClk(RCC_APB2, 2);
+
+	RCC_voidEnableADC_Prescaler();
+
+	//set the A1 analog input
+	DIO_voidSetPinDirection(PORTA, PIN1, GPIO_INPUT_ANALOG);
+
+	//set the pin dio output push pull
+	DIO_voidSetPinDirection(PORTB, PIN6, GPIO_OUTPUT_10MHZ_PP);
+
+	DIO_voidSetPinDirection(PORTA, PIN10, GPIO_OUTPUT_10MHZ_PP);
+	ADC_Init();
+	//ADC_void_init();
+	//ADC_enable();
+	//ADC_Start();
+	//temp=ADC_Start_Single_Conversion(0);
+	//ADC_channelSetup(PIN1 ,SEQ1 ,cycles_1_5);
+	//ADC_voidEnable();
+	//x =ADC_u16_read(CHANNEL_1);
+	u16 local_val;
+
+	while(1)
+	{
+
+
+		//temp=ADC_Start_Single_Conversion(0);
+
+		reading=ADC_Start_Single_Conversion(1);
+
+		//ADC1->CR2|=0x00400000;
+			//while(!(ADC1->SR &2));
+			//local_val=ADC1->DR;
+			_delay_ms(50);
+		//x =ADC_u16_read(CHANNEL_1);
+		led_blink(PIN10,PORTA);
+		//x=ADC_Start_Single_Conversion(CHANNEL_1);
+		//reading = ADC1 ->DR & 0x0000FFFF;
+		analog= (((u32)reading*3300)/(4096)); // equation for temp to work
+		temp=analog/10;
+		_delay_ms(1000);
+		//led_blink(PIN6,PORTB);
+		if(temp>2)
+		{
+
+			//DIO_voidSetPinValue(PORTC, PIN13, GPIO_LOW);
+			led_blink(PIN6,PORTB);
+
+
+		}
+		else
+		{
+			led_off(PIN6,PORTB);
+			led_off(PIN10,PORTA);
+
+		}
+	}
+	return 0 ;
+}
+
+//last chance adc
+/*
+#include "RCC_private.h"`
+#include "RCC_config.h"
+int main ()
+{
+	RCC_APB2ENR	 = 0x0204;
+	RCC_APB1ENR	 = 0x20000;
+	RCC_voidEnablePerClk(RCC_APB2, 3);
+	GPIOA_CRL=0x00004A00;
+	ADC_Init();
+	DIO_voidSetPinDirection(PORTB, PIN6, GPIO_OUTPUT_10MHZ_PP);
+	u16 analog;
+	DIO_voidSetPinValue(PORTB, PIN6, GPIO_HIGH);
+	while(1)
+	{
+		analog=ADC_Start_Single_Conversion(1);
+			_delay_ms(50);
+	}
+}*/
 
 
 
