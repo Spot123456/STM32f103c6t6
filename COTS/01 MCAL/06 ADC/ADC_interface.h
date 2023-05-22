@@ -4,10 +4,10 @@
 #ifndef ADC_INTERFACE_H
 #define ADC_INTERFACE_H
 
-/*
+
 #define single_conv		0
 #define Scan_conv		1
-
+/*
 void	ADC_Init();
 u16	ADC_Start_Single_Conversion(u8 channel);
 
@@ -67,7 +67,6 @@ void ADC_ExternalTrigConvEdge(void);
 //#endif
 
 	/*******************    Public Macros    ********************/
-
 typedef enum
 {
 	CHANNEL_0,
@@ -83,7 +82,7 @@ typedef enum
 }Channel_ID;
 
 	/******************* Functions Prototypes ********************/
-void	_delay_ms(u32 _ms);
+//void	_delay_ms(u32 _ms);
 
 //void	ADC_void_init	(void);
 //u16		ADC_u16_read	(Channel_ID Copy_enuChannel);
@@ -92,4 +91,15 @@ void	ADC_Init();
 u16	ADC_Start_Single_Conversion(u8 channel);
 
 
+
+/*
+void	ADC_void_init(void);
+void 	ADC_enable(void);
+void 	ADC_Start(void);
+
+void	ADC_void_Init(void);
+void 	ADC_Enable(void);
+void 	ADC_Start(void);
+u16		ADC_u16_ReadChannel	(u8 Channel_ID);
+*/
 #endif

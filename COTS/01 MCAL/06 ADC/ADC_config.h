@@ -2,7 +2,15 @@
 #define ADC_CONFIG_H
 
 
-//#define mode  single_conv
+
+
+
+
+
+
+#define mode  single_conv
+
+
 /*
 
 
