@@ -64,10 +64,9 @@ void TWI_SendRepeatedStart()
 void TWI_SendSlaveAddressWithWrite(u8 copy_Slaveaddress) //0
 {
 	//	Note: THE ADDRESS max 112 address in I2C
-	//7 BIT SLAV ADD, WRITE bit AFTER SLAVE ADDRESS
-	I2C1->DR |=  (copy_Slaveaddress <<1)|CLR_BIT(I2C1->DR, 0); ;
-	
-	
+	I2C1->DR =  copy_Slaveaddress <<1 ; //7 BIT SLAV ADD
+	// WRITE COMMAND AFTER SLAVE ADDRESS
+	CLR_BIT(I2C1->DR,0);
 	// wait the ADDR to be 1
 	while ((GET_BIT(I2C1->SR1,1)) ==0);
 
@@ -76,11 +75,10 @@ void TWI_SendSlaveAddressWithWrite(u8 copy_Slaveaddress) //0
 
 void TWI_SendSlaveAddressWithRead(u8 copy_Slaveaddress) //1
 {
-	//	Note: THE ADDRESS max 112 address in I2C 
-	//7 BIT SLAV ADD, READ bit AFTER SLAVE ADDRESS
-	I2C1->DR| =  (copy_Slaveaddress<<1)| SET_BIT(I2C1->DR, 0);;
-	
-		
+	//	Note: THE ADDRESS max 112 address in I2C
+	I2C1->DR =  copy_Slaveaddress<<1;
+	// WRITE COMMAND AFTER SLAVE ADDRESS
+		SET_BIT(I2C1->DR,0);
 		// wait the ADDR to be 1
 	while ((GET_BIT(I2C1->SR1,1)) ==0);
 
